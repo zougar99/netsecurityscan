@@ -1,0 +1,19 @@
+[project]
+name = "security-network"
+version = "2.0"
+description = "WiFi & Network Security Scanner - i7tarafiya mn jami3 nawa7i"
+requires-python = ">=3.8"
+dependencies = [
+    "psutil>=5.8.0",
+]
+optional-dependencies = {
+    rich = ["rich>=10.0.0"],
+    gui = [],
+}
+
+[project.scripts]
+security-network = "src.security_scanner.cli:main"
+security-network-gui = "src.security_scanner.gui:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
