@@ -1,14 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-🔒 NetSecScanner 🔒
-WiFi & Network Security Scanner | i7tarafiya mn jami3 nawa7i
-Chkon m3ak f WiFi? | Bzaaf tools (75+)
+███████╗███╗   ██╗███████╗
+██╔════╝████╗  ██║██╔════╝
+███████╗██╔██╗ ██║███████╗
+╚════██║██║╚██╗██║╚════██║
+███████║██║ ╚████║███████║
+╚══════╝╚═╝  ╚═══╝╚══════╝
+
+NetSecurityScan (SNS) - WiFi & Network Security Scanner
+i7tarafiya mn jami3 nawa7i | Chkon m3ak f WiFi
+78+ Tools | Advanced Security
 
 Usage:
-    python NetSecScanner.py                     # Choose CLI or GUI
-    python NetSecScanner.py --cli               # Force CLI
-    python NetSecScanner.py --gui               # Force GUI
+    python NetSecScanner.py          # Choose CLI or GUI
+    python NetSecScanner.py --cli    # Force CLI
+    python NetSecScanner.py --gui    # Force GUI
 """
 
 import sys
@@ -1058,7 +1065,7 @@ def export_wifi_scan_to_file(path=None):
     if path is None: path = "wifi_scan_export.txt"
     try:
         with open(path, "w", encoding="utf-8") as f:
-            f.write("Security Network - WiFi Scan Export\nSSID | BSSID | Channel | Signal | Security\n" + "-"*60 + "\n")
+            f.write(f"{APP_SHORT} {APP_NAME} - WiFi Scan Export\nSSID | BSSID | Channel | Signal | Security\n" + "-"*60 + "\n")
             for n in networks:
                 f.write(f"{n.get('ssid','')} | {n.get('bssid','')} | {n.get('channel','')} | {n.get('signal','')} | {n.get('auth','')}\n")
         return f"Exported {len(networks)} networks to {path}"
@@ -1070,7 +1077,7 @@ def export_devices_to_file(path=None):
     if path is None: path = "devices_export.txt"
     try:
         with open(path, "w", encoding="utf-8") as f:
-            f.write("Security Network - Devices Export\nIP | MAC | Vendor\n" + "-"*50 + "\n")
+            f.write(f"{APP_SHORT} {APP_NAME} - Devices Export\nIP | MAC | Vendor\n" + "-"*50 + "\n")
             for ip, mac in devices:
                 f.write(f"{ip} | {mac} | {get_mac_vendor(mac)}\n")
         return f"Exported {len(devices)} devices to {path}"
@@ -1907,12 +1914,14 @@ def cli_set_window_title():
     except: pass
 
 def cli_show_banner():
-    sep = "=" * 50
+    sep = "=" * 60
     if RICH:
-        console.print(RichPanel(f"[bold cyan]{APP_NAME}[/bold cyan]\n[bold]v{APP_VERSION}[/bold]\n[dim]{APP_TAGLINE}[/dim]",
+        console.print(RichPanel(
+            f"[bold cyan]{APP_LOGO_ASCII}[/bold cyan]\n[bold]{APP_NAME} ({APP_SHORT}) v{APP_VERSION}[/bold]\n[dim]{APP_TAGLINE}[/dim]",
             title="[bold white] Application [/bold white]", border_style="cyan", padding=(0, 2)))
     else:
-        _print(sep); _print(f"  {APP_NAME}  |  v{APP_VERSION}"); _print(f"  {APP_TAGLINE}"); _print(sep)
+        _print(APP_LOGO_ASCII)
+        _print(sep); _print(f"  {APP_NAME} ({APP_SHORT})  v{APP_VERSION}  |  {APP_TAGLINE}"); _print(sep)
 
 def cli_show_dashboard():
     my_ip = get_my_ip(); gw = get_gateway_windows(); hostname = get_hostname()
@@ -1979,7 +1988,7 @@ H.  Dashboard  |  W. WiFi Analyzer  |  S. Speed test  |  C. Channel finder
 0.  Exit
 A.  About & Contact (Telegram @PythonMen007)
 0.  Exit
---- {APP_NAME} v{APP_VERSION} | {APP_TAGLINE} | {TOTAL_TOOLS} Tools ---"""
+--- {APP_SHORT} {APP_NAME} v{APP_VERSION} | {APP_TAGLINE} | {TOTAL_TOOLS} Tools ---"""
 
 def cli_wifi_scanner_full_view():
     networks = wifi_analyzer_networks()
@@ -2433,8 +2442,16 @@ def gui_main():
     class MainApp(tk.Tk):
         def __init__(self):
             super().__init__()
-            self.title(TITLE); self.minsize(920, 620); self.geometry("1024x680")
-            self._style(); self._menu(); self._ui()
+            self.title(f"{APP_NAME} ({APP_SHORT}) v{APP_VERSION} - {APP_TAGLINE}")
+            self.minsize(920, 620); self.geometry("1024x680")
+            self._set_icon(); self._style(); self._menu(); self._ui()
+
+        def _set_icon(self):
+            try:
+                base = os.path.dirname(os.path.abspath(__file__))
+                ico = os.path.join(base, "logo.ico")
+                if os.path.isfile(ico): self.iconbitmap(ico)
+            except: pass
 
         def _style(self):
             style = ttk.Style()
@@ -2444,15 +2461,14 @@ def gui_main():
             elif "clam" in style.theme_names(): style.theme_use("clam")
 
         def _menu(self):
-            menubar = tk.Menu(self)
-            self.config(menu=menubar)
+            menubar = tk.Menu(self); self.config(menu=menubar)
             file_menu = tk.Menu(menubar, tearoff=0)
             menubar.add_cascade(label="File", menu=file_menu)
             file_menu.add_command(label="Exit", command=self.quit)
             help_menu = tk.Menu(menubar, tearoff=0)
             menubar.add_cascade(label="Help", menu=help_menu)
             about_text = (
-                f"{APP_NAME} v{APP_VERSION}\n"
+                f"{APP_NAME} ({APP_SHORT}) v{APP_VERSION}\n"
                 f"{APP_TAGLINE}\n\n"
                 f"Developer: {APP_AUTHOR}\n"
                 f"Telegram: {APP_CONTACT['telegram']}\n"
@@ -2463,11 +2479,11 @@ def gui_main():
                 f"Advanced AntiHacking & IDS\n\n"
                 f"For educational & authorized testing only."
             )
-            help_menu.add_command(label=f"About {APP_NAME}", command=lambda: messagebox.showinfo(f"About {APP_NAME}", about_text))
+            help_menu.add_command(label=f"About {APP_SHORT}", command=lambda: messagebox.showinfo(f"About {APP_NAME}", about_text))
 
         def _ui(self):
             hdr = ttk.Frame(self, padding=(10,8)); hdr.pack(fill=tk.X)
-            ttk.Label(hdr, text=APP_NAME, font=("Segoe UI",16,"bold")).pack(side=tk.LEFT)
+            ttk.Label(hdr, text=f"{APP_SHORT} {APP_NAME}", font=("Segoe UI",16,"bold")).pack(side=tk.LEFT)
             ttk.Label(hdr, text=f"  {APP_TAGLINE}", font=("Segoe UI",11,"bold")).pack(side=tk.LEFT)
             sf = ttk.Frame(hdr); sf.pack(side=tk.RIGHT, padx=10)
             try:
@@ -2482,10 +2498,10 @@ def gui_main():
                 (SecurityTab(nb), "Security"), (ToolsTab(nb), "Tools")]:
                 nb.add(tab, text=f"  {name}  ")
             ftr = ttk.Frame(self, padding=(8,6)); ftr.pack(fill=tk.X)
-            ttk.Label(ftr, text=f"{APP_NAME}  {APP_TAGLINE}  |  Telegram: {APP_CONTACT['telegram']}", font=("Segoe UI",9,"bold")).pack()
+            ttk.Label(ftr, text=f"{APP_SHORT} {APP_NAME}  |  {APP_TAGLINE}  |  Telegram: {APP_CONTACT['telegram']}", font=("Segoe UI",9,"bold")).pack()
             ttk.Separator(self, orient=tk.HORIZONTAL).pack(fill=tk.X)
             sb = ttk.Frame(self, padding=(8,4)); sb.pack(fill=tk.X)
-            ttk.Label(sb, text=f"{APP_TAGLINE}  |  Ready  |  {APP_NAME} v{APP_VERSION}  |  {APP_CONTACT['telegram']}").pack()
+            ttk.Label(sb, text=f"{APP_TAGLINE}  |  Ready  |  {APP_SHORT} {APP_NAME} v{APP_VERSION}  |  {APP_CONTACT['telegram']}").pack()
 
     app = MainApp()
     app.mainloop()
